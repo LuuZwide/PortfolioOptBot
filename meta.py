@@ -1,5 +1,5 @@
 import MetaTrader5 as mt5
-import time
+import utils
 
 def login(username, password, server, retry_count = 0):
         username = username
@@ -77,7 +77,7 @@ def closePositions(symbol):
                     mt5.Close(symbol,ticket=position_id)
         return
 
-def getRequest(type, price,magic,symbol, volume = 0.05,deviation = 20): 
+def getRequest(type, price,magic,symbol, volume = 0.01,deviation = 20): 
     request = {
         "action"        : mt5.TRADE_ACTION_DEAL,
         "magic"         : magic + 1,
@@ -94,16 +94,28 @@ def getRequest(type, price,magic,symbol, volume = 0.05,deviation = 20):
 
 def BUY(symbol, counter):
     type = mt5.ORDER_TYPE_BUY
+    print('symbol : ', symbol)
     price = mt5.symbol_info_tick(symbol).ask 
     request = getRequest(type,price, counter, symbol)
-    mt5.order_send(request)
+    result = mt5.order_send(request)
+    
+    if result.retcode != mt5.TRADE_RETCODE_DONE:
+        print("order failed , retcode = {}".format(result.retcode))
+        utils.wait_minute(minutes = 1, seconds = 10)
+         
     return price 
 
 def SELL(symbol, counter):
     type = mt5.ORDER_TYPE_SELL
+    print('symbol : ', symbol)
     price = mt5.symbol_info_tick(symbol).ask 
     request = getRequest(type,price, counter, symbol)
-    mt5.order_send(request)
+    result = mt5.order_send(request)
+    
+    if result.retcode != mt5.TRADE_RETCODE_DONE:
+        print("order failed , retcode = {}".format(result.retcode))
+        utils.wait_minute(minutes = 1, seconds = 10)
+
     return price
 
 

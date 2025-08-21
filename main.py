@@ -4,6 +4,7 @@ import numpy as np
 import utils
 import pandas as pd
 import meta
+import MetaTrader5 as mt5
 import stable_baselines3
 
 print(np.__version__)
@@ -14,7 +15,7 @@ print(stable_baselines3.__version__)
 # U = 95713077 
 
 if __name__ == "__main__":
-    symbols = ['EURUSD','USDCHF','EURJPY','USDJPY']
+    symbols = ['EURUSD','USDJPY']
     
     user = 'demo' # demo or LIVE
     logins_dir = r"C:\Users\LNxumalo\Desktop\other\Docs"
@@ -34,6 +35,8 @@ if __name__ == "__main__":
         print('closing ', env.close_prices)
         print('actions :',action_dict )
         print('%',env.portfolio.percentage_diff_dict.values())
+        print('env current_value: ', env.current_value)
+        print('Equity :', mt5.account_info().equity)
         print('\n')
         utils.wait_minute(15,10) #15 minutes 10 seconds
 

@@ -92,4 +92,25 @@ def get_logins(dir,user):
     return username, password, server
 
 # P = _n7wRxUo
-# U = 95713077 
+# U = 95713077
+
+def write_to_csv(mean, std, dir):
+    mean_df = pd.DataFrame(mean)
+    std_df = pd.DataFrame(std)
+    
+    #write to csv
+    mean_df.to_csv(dir + 'mean.csv', index=False)
+    std_df.to_csv(dir + 'std.csv', index=False)
+    
+    return 
+
+def read_from_csv(dir):
+    mean_df = pd.read_csv(dir + 'mean.csv')
+    std_df = pd.read_csv(dir + 'std.csv')
+    
+    mean = mean_df.values
+    std = std_df.values
+    
+    mean = mean.flatten()
+    std = std.flatten()
+    return mean, std

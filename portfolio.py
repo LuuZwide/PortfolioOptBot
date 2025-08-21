@@ -44,13 +44,13 @@ class portolio():
 
             if (action > self.threshold_value) and self.bought[symbol]: #Update port
                 bought_value  = self.bought_values[symbol]
-                percentage_diff, port_change = self.calculate_returns(close_value, 'B',bought_value, -1)
+                port_change, percentage_diff = self.calculate_returns(close_value, 'B',bought_value, -1)
                 self.port_changes[symbol] = 0
                 self.percentage_diff_dict[symbol] = percentage_diff
 
             if (action < -1*self.threshold_value) and self.selling[symbol]: #Update port
                 selling_value = self.selling_values[symbol]
-                percentage_diff, port_change = self.calculate_returns(close_value, 'S', -1 ,selling_value)
+                port_change, percentage_diff = self.calculate_returns(close_value, 'S', -1 ,selling_value)
                 self.port_changes[symbol] = 0
                 self.percentage_diff_dict[symbol] = percentage_diff
 
@@ -58,7 +58,7 @@ class portolio():
                 if self.selling[symbol]:#Close the sell trade
                     self.selling[symbol] = False
                     selling_value = self.selling_values[symbol]
-                    percentage_diff, port_change = self.calculate_returns(close_value, 'S', -1, selling_value)
+                    port_change, percentage_diff = self.calculate_returns(close_value, 'S', -1, selling_value)
                     self.value += percentage_diff
                     self.port_changes[symbol] = port_change
                     self.percentage_diff_dict[symbol] = 0               
@@ -78,7 +78,7 @@ class portolio():
                 if self.bought[symbol]: #Close the buy trade
                     self.bought[symbol] = False
                     bought_value = self.bought_values[symbol]
-                    percentage_diff, port_change = self.calculate_returns(close_value, 'B', bought_value, -1)
+                    port_change, percentage_diff = self.calculate_returns(close_value, 'B', bought_value, -1)
                     self.value += percentage_diff
                     self.port_changes[symbol] = port_change
                     self.percentage_diff_dict[symbol] = 0
@@ -87,14 +87,14 @@ class portolio():
                     self.selling[symbol] = True
                     _, self.selling_values[symbol] = self.add_spread(close_value)
                     selling_value = self.selling_values[symbol]
-                    percentage_diff, port_change = self.calculate_returns(close_value, 'S', -1 , selling_value)
+                    port_change, percentage_diff = self.calculate_returns(close_value, 'S', -1 , selling_value)
                     self.port_changes[symbol] = 0
                     self.percentage_diff_dict[symbol] = percentage_diff  
                     meta.SELL(self.meta_symbols[symbol],self.counter)
 
             if ((action < self.threshold_value) and (action > -1*self.threshold_value)) and self.bought[symbol]: # Close the buy
                 bought_value = self.bought_values[symbol]
-                percentage_diff, port_change = self.calculate_returns(close_value, 'B',bought_value,-1)
+                port_change, percentage_diff = self.calculate_returns(close_value, 'B',bought_value,-1)
                 self.value += percentage_diff
                 self.port_changes[symbol] = port_change
                 self.percentage_diff_dict[symbol] = 0
@@ -105,7 +105,7 @@ class portolio():
             if ((action < self.threshold_value) and  (action > -1*self.threshold_value)) and self.selling[symbol]: #Close the sell
                 self.closed = True
                 selling_value = self.selling_values[symbol]
-                percentage_diff, port_change = self.calculate_returns(close_value, 'S',-1,selling_value)
+                port_change, percentage_diff= self.calculate_returns(close_value, 'S',-1,selling_value)
                 self.value += percentage_diff
                 self.port_changes[symbol] = port_change
                 self.percentage_diff_dict[symbol] = 0

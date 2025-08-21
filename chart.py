@@ -38,7 +38,7 @@ class Chart():
         original_chart_dict = {}
         for symbol in self.symbols:
             symbol_chart = self.get_polygon_chart(symbol = symbol) # Return latest chart Data
-            print(symbol_chart)
+            #print(symbol_chart)
 
             #Perform the preprocessing functions 
             denoised_chart = self.perform_wavelet_denoise(symbol_chart)
@@ -72,12 +72,12 @@ class Chart():
         chart_to_date = today.strftime('%Y-%m-%d') # to today
         chart_from_date = today - timedelta(days=(1)) #From Yesterday
         chart_from_date = chart_from_date.strftime('%Y-%m-%d')
-        df = self.generateCandleSticks(client=FOREX_CLIENT, start_date = chart_from_date, end_date = chart_to_date, limit = 200, symbol = symbol )
+        df = self.generateCandleSticks(client=FOREX_CLIENT, start_date = chart_from_date, end_date = chart_to_date, limit = 400, symbol = symbol )
         return df
 
     def generateCandleSticks(self,client = FOREX_CLIENT, start_date = datetime.today().strftime('%Y-%m-%d') , end_date= datetime.today().strftime('%Y-%m-%d') ,limit = 1000, symbol= None):
         symbol = 'C:' + symbol # type: ignore
-        response =  client.get_aggs(ticker = symbol ,multiplier = 1,timespan = 'minute',
+        response =  client.get_aggs(ticker = symbol ,multiplier = 15,timespan = 'minute',
                                   from_= start_date, to = end_date, sort = 'asc',limit = limit) # Oldest -> Latest
         
         df = pd.DataFrame(response)

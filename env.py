@@ -1,6 +1,7 @@
 import portfolio
 import numpy as np
 import chart
+import utils
 
 class Env():
 
@@ -14,9 +15,10 @@ class Env():
         self.port_diffs = np.zeros((1000,len(self.symbols)))
         self.actions = np.zeros((1000,len(self.symbols)))
         self.chart_obj = chart.Chart(self.symbols)
-        self.chart_mean = 1
-        self.chart_std = 1
+
+        self.mean, self.std = utils.read_from_csv(dir = 'G:\\My Drive\\Models\\chartStats\\')
         self.threshold = 0
+        self.current_value = None
     
     def reset(self):
         _ = self.portfolio.reset()
@@ -26,14 +28,14 @@ class Env():
         self.actions = np.zeros((1000,len(self.symbols)))
         self.index = 5
         self.chart,self.og_chart = self.chart_obj.process()
-        self.cols, self.len = self.chart.shape
+        self.chart_len,self.cols = self.chart.shape
         state = self.get_recurrent_state(self.index)
         return state
 
     def get_recurrent_state(self, index):
-
+        
         sequence = self.chart[index-self.timesteps:index]
-        sequence = (sequence - self.chart_mean)/self.chart_std
+        sequence = (sequence - self.mean)/self.std
         sequence = np.reshape(sequence, (1,self.timesteps,self.cols))
 
         port_values = self.port_values[index-self.timesteps:index]
@@ -53,14 +55,17 @@ class Env():
             self.close_prices[symbol] = self.og_chart[symbol]['close'].iloc[-1] # Last close value from original chart
         
         port_diffs, current_value = self.portfolio.update_value(close_values = self.close_prices, actions = action_dict)
+        self.current_value = current_value
         self.port_values[self.index] = current_value * 0.1
         self.port_diffs[self.index] = np.array(list(port_diffs.values()))
     
     def step(self, action):
         self.calculate_reward(action)
+        done = False
 
         if ((self.port_values[self.index] < self.threshold*0.1)):
             done = True
+            print('done')
 
         next_state = self.get_recurrent_state(self.index)
         self.index += 1
