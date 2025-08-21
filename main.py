@@ -36,7 +36,7 @@ if __name__ == "__main__":
         print('actions :',action_dict )
         print('%',env.portfolio.percentage_diff_dict.values())
         print('env current_value: ', env.current_value)
-        print('Equity :', mt5.account_info().equity)
+        print('Equity :', mt5.account_info().equity) # type: ignore
         print('\n')
         utils.wait_minute(15,10) #15 minutes 10 seconds
 

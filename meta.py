@@ -9,13 +9,13 @@ def login(username, password, server, retry_count = 0):
         print('password : ', password)
         print('server : ', server)
 
-        if not mt5.initialize(login=username, server=server,password=password):
-              print("login failed, error code =",mt5.last_error())
+        if not mt5.initialize(login=username, server=server,password=password):# type: ignore 
+              print("login failed, error code =",mt5.last_error())# type: ignore 
               quit()
         else: 
               #Set equity values only if this is the first start
               if (retry_count == 0):
-                    initial_equity = mt5.account_info().equity
+                    initial_equity = mt5.account_info().equity # type: ignore
                     print('Equity set to :', initial_equity)
 
 def get_meta_symbols(symbols, env_type):
@@ -33,21 +33,21 @@ def do_test(symbols, env_type):
     meta_symbols = get_meta_symbols(symbols, env_type)
     for symbol in symbols:
         
-        if not mt5.symbol_select(meta_symbols[symbol], True):
-            print(f"Failed to select {meta_symbols[0]}, error code =", mt5.last_error())
+        if not mt5.symbol_select(meta_symbols[symbol], True): # type: ignore
+            print(f"Failed to select {meta_symbols[0]}, error code =", mt5.last_error()) # type: ignore
             return False
         else:
-            tick_info = mt5.symbol_info_tick(meta_symbols[symbol])  
+            tick_info = mt5.symbol_info_tick(meta_symbols[symbol])  # type: ignore
             if tick_info:
                 print('Passed Connection...')
                 return True
             else:
-                print(f"Failed to get tick info for {meta_symbols[symbol]}, error code =", mt5.last_error())   
+                print(f"Failed to get tick info for {meta_symbols[symbol]}, error code =", mt5.last_error()) # type: ignore   
                 return False
 
 def can_act(self):
     #check equity
-    current_equity = mt5.account_info().equity
+    current_equity = mt5.account_info().equity # type: ignore
     can_act = True
     threshold = self.threshold_percent * self.initial_equity
     
@@ -69,7 +69,7 @@ def retry(env_type,symbols,username, password,server,fail_count):
         return result
 
 def closePositions(symbol):
-        positions = mt5.positions_get(symbol=symbol)
+        positions = mt5.positions_get(symbol=symbol) # type: ignore
         if positions != None:  
               for position in positions:
                     position_id = position.ticket
@@ -95,9 +95,9 @@ def getRequest(type, price,magic,symbol, volume = 0.01,deviation = 20):
 def BUY(symbol, counter):
     type = mt5.ORDER_TYPE_BUY
     print('symbol : ', symbol)
-    price = mt5.symbol_info_tick(symbol).ask 
+    price = mt5.symbol_info_tick(symbol).ask # type: ignore
     request = getRequest(type,price, counter, symbol)
-    result = mt5.order_send(request)
+    result = mt5.order_send(request) # type: ignore
     
     if result.retcode != mt5.TRADE_RETCODE_DONE:
         print("order failed , retcode = {}".format(result.retcode))
@@ -108,9 +108,9 @@ def BUY(symbol, counter):
 def SELL(symbol, counter):
     type = mt5.ORDER_TYPE_SELL
     print('symbol : ', symbol)
-    price = mt5.symbol_info_tick(symbol).ask 
+    price = mt5.symbol_info_tick(symbol).ask  # type: ignore
     request = getRequest(type,price, counter, symbol)
-    result = mt5.order_send(request)
+    result = mt5.order_send(request) # type: ignore
     
     if result.retcode != mt5.TRADE_RETCODE_DONE:
         print("order failed , retcode = {}".format(result.retcode))
