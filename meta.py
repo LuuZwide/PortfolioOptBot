@@ -87,7 +87,7 @@ def getRequest(type, price,magic,symbol, volume = 0.01,deviation = 20):
         "type"          : type,
         "deviation"     : deviation ,
         "type_time"     : mt5.ORDER_TIME_GTC,
-        "type_filling"  : mt5.ORDER_FILLING_IOC, 
+        "type_filling"  : mt5.ORDER_FILLING_FOK, 
         "comment"       : "This is a test order ",   
     }
     return request
@@ -96,7 +96,9 @@ def BUY(symbol, counter):
     type = mt5.ORDER_TYPE_BUY
     print('symbol : ', symbol)
     price = mt5.symbol_info_tick(symbol).ask # type: ignore
+    print('TICK INFO : ',  mt5.symbol_info_tick(symbol))
     request = getRequest(type,price, counter, symbol)
+    print('REQUEST INFO : ', request)
     result = mt5.order_send(request) # type: ignore
     
     if result.retcode != mt5.TRADE_RETCODE_DONE:
@@ -109,7 +111,9 @@ def SELL(symbol, counter):
     type = mt5.ORDER_TYPE_SELL
     print('symbol : ', symbol)
     price = mt5.symbol_info_tick(symbol).ask  # type: ignore
+    print('TICK INFO : ',  mt5.symbol_info_tick(symbol))
     request = getRequest(type,price, counter, symbol)
+    print('REQUEST INFO : ', request)
     result = mt5.order_send(request) # type: ignore
     
     if result.retcode != mt5.TRADE_RETCODE_DONE:
