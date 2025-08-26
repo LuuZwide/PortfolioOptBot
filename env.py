@@ -60,6 +60,8 @@ class Env():
         self.port_diffs[self.index] = np.array(list(port_diffs.values()))
     
     def step(self, action):
+        
+        self.chart,self.og_chart = self.chart_obj.process()
         self.calculate_reward(action)
         done = False
 

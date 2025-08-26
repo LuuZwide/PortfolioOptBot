@@ -22,7 +22,7 @@ def get_meta_symbols(symbols, env_type):
     meta_symbols = {}
     for symbol in symbols:
         if env_type.upper() == 'LIVE':
-            meta_symbol = symbol + 'm'
+            meta_symbol = symbol
         else:
             meta_symbol = symbol
         meta_symbols[symbol] = meta_symbol
@@ -87,7 +87,7 @@ def getRequest(type, price,magic,symbol, volume = 0.01,deviation = 20):
         "type"          : type,
         "deviation"     : deviation ,
         "type_time"     : mt5.ORDER_TIME_GTC,
-        "type_filling"  : mt5.ORDER_FILLING_FOK, 
+        "type_filling"  : mt5.ORDER_FILLING_IOC, 
         "comment"       : "This is a test order ",   
     }
     return request

@@ -68,7 +68,7 @@ class portolio():
                     self.bought[symbol] = True
                     self.bought_values[symbol], _ = self.add_spread(close_value)
                     bought_value = self.bought_values[symbol]
-                    percentage_diff, port_change = self.calculate_returns(close_value, 'B', bought_value, -1 )
+                    port_change, percentage_diff = self.calculate_returns(close_value, 'B', bought_value, -1 )
                     self.port_changes[symbol] = 0
                     self.percentage_diff_dict[symbol] = percentage_diff
 

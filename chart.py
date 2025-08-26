@@ -72,10 +72,11 @@ class Chart():
         chart_to_date = today.strftime('%Y-%m-%d') # to today
         chart_from_date = today - timedelta(days=(1)) #From Yesterday
         chart_from_date = chart_from_date.strftime('%Y-%m-%d')
-        df = self.generateCandleSticks(client=FOREX_CLIENT, start_date = chart_from_date, end_date = chart_to_date, limit = 400, symbol = symbol )
+        df = self.generateCandleSticks(client=FOREX_CLIENT, start_date = chart_from_date, end_date = chart_to_date, limit = 5000, symbol = symbol )
+        print(symbol ,' ', df.values[-1], ' - ', df.values[0], len(df.values))
         return df
 
-    def generateCandleSticks(self,client = FOREX_CLIENT, start_date = datetime.today().strftime('%Y-%m-%d') , end_date= datetime.today().strftime('%Y-%m-%d') ,limit = 1000, symbol= None):
+    def generateCandleSticks(self,client, start_date  , end_date ,limit , symbol= None):
         symbol = 'C:' + symbol # type: ignore
         response =  client.get_aggs(ticker = symbol ,multiplier = 15,timespan = 'minute',
                                   from_= start_date, to = end_date, sort = 'asc',limit = limit) # Oldest -> Latest

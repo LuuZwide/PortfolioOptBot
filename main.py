@@ -15,7 +15,7 @@ print(stable_baselines3.__version__)
 # U = 95713077 
 
 if __name__ == "__main__":
-    symbols = ['EURUSD','USDJPY']
+    symbols = ['EURUSD', 'USDCHF', 'EURJPY', 'USDJPY']
     
     user = 'demo' # demo or LIVE
     logins_dir = r"C:\Users\LNxumalo\Desktop\other\Docs"
