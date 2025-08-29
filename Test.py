@@ -37,6 +37,9 @@ if __name__ == "__main__":
 
     while not (done):
         action, _ = model.predict(state, deterministic=True)
+
+        print('action ', action)
+        action = np.ones((len(symbols),1))* -1
         action_dict = dict(zip(symbols, np.squeeze(action)))
         state, done= env.step(action)
         # Debug msg
@@ -46,6 +49,10 @@ if __name__ == "__main__":
         print('env current_value: ', env.current_value)
         print('Equity :', mt5.account_info().equity) # type: ignore
         print('\n')
+        action = np.ones((len(symbols),1)) 
+        action_dict = dict(zip(symbols, np.squeeze(action)))
+        state, done= env.step(action)
+
         env.save_env()
         utils.wait_minute(15,10) #15 minutes 10 seconds
 

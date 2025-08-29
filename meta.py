@@ -73,8 +73,33 @@ def closePositions(symbol):
         if positions != None:  
               for position in positions:
                     position_id = position.ticket
-                    print('Postion Type :',position.type)
-                    mt5.Close(symbol,ticket=position_id)
+                    print(symbol, ' Postion Type :',position.type, 'Ticket:', position_id)
+                    pos_type = position.type  # 0 = buy, 1 = sell
+                    
+                    if pos_type == mt5.ORDER_TYPE_BUY:
+                        order_type = mt5.ORDER_TYPE_SELL
+                        price = mt5.symbol_info_tick(symbol).bid
+                    else:
+                        order_type = mt5.ORDER_TYPE_BUY
+                        price = mt5.symbol_info_tick(symbol).ask
+
+                    request = {
+                                "action": mt5.TRADE_ACTION_DEAL,
+                                "symbol": symbol,
+                                "volume": 0.01,
+                                "type": order_type,
+                                "position": position.ticket,
+                                "price": price,
+                                "deviation": 20,
+                                "magic": 0,
+                                "comment": "Close position",
+                                "type_filling": mt5.ORDER_FILLING_IOC,
+                                } 
+                    result = mt5.order_send(request)
+                    if result.retcode != mt5.TRADE_RETCODE_DONE:
+                        print(f"Failed to close position #{position.ticket}, retcode={result.retcode}")
+                    else:
+                        print(f"Position #{position.ticket} closed successfully") 
         return
 
 def getRequest(type, price,magic,symbol, volume = 0.01,deviation = 20): 

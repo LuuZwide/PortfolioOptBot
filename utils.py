@@ -114,3 +114,46 @@ def read_from_csv(dir):
     mean = mean.flatten()
     std = std.flatten()
     return mean, std
+
+def wait_until_time(target_time):
+    while True:
+        now = datetime.now()
+        if now.strftime("%H:%M") == target_time:
+            break
+        time.sleep(1)
+
+def save_actions(actions, dir):
+    #Create folder for today
+    actions_df = pd.DataFrame(actions)
+    actions_df.to_csv(dir + 'actions.csv', index=False)
+    return
+
+def save_port_values(port_values, dir):
+    port_values_df = pd.DataFrame(port_values)
+    port_values_df.to_csv(dir + 'port_values.csv', index=False)
+    return
+
+def save_portfolio_diffs(portfolio_diffs, dir):
+    portfolio_diffs_df = pd.DataFrame(portfolio_diffs)
+    portfolio_diffs_df.to_csv(dir + 'portfolio_diffs.csv', index=False)
+    return
+
+def save_index(index, dir):
+    index_df = pd.DataFrame([index])
+    index_df.to_csv(dir + 'index.csv', index=False)
+    return
+
+def load_env_values(dir):
+    actions = pd.read_csv(dir + 'actions.csv').values
+    port_values = pd.read_csv(dir + 'port_values.csv').values
+    portfolio_diffs = pd.read_csv(dir + 'portfolio_diffs.csv').values
+    index = pd.read_csv(dir + 'index.csv').values
+    return actions, port_values, portfolio_diffs, index
+
+def get_previous_weekday(date):
+    #IF yesterday was Sunday get Friday
+    if date.weekday() == 0:  # Monday
+        previous_weekday = date - timedelta(days=3)
+    else:
+        previous_weekday = date - timedelta(days=1)
+    return previous_weekday

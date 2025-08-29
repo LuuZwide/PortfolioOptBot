@@ -2,6 +2,8 @@ import portfolio
 import numpy as np
 import chart
 import utils
+from datetime import datetime, timedelta
+import os
 
 class Env():
 
@@ -11,22 +13,28 @@ class Env():
         self.portfolio = portfolio.portolio(self.symbols,env_type)
         self.timesteps = 5
 
-        self.port_values = np.ones((1000,1)) *0.1
+        self.port_values = np.zeros((1000,1)) 
         self.port_diffs = np.zeros((1000,len(self.symbols)))
         self.actions = np.zeros((1000,len(self.symbols)))
         self.chart_obj = chart.Chart(self.symbols)
 
         self.mean, self.std = utils.read_from_csv(dir = 'G:\\My Drive\\Models\\chartStats\\')
         self.threshold = 0
-        self.current_value = None
+        self.current_value = 0
     
-    def reset(self):
+    def reset(self, load_from_yesterday = False):
         _ = self.portfolio.reset()
         self.action_dict = {}
-        self.port_values = np.ones((1000,1)) *0.1
-        self.port_diffs = np.zeros((1000,len(self.symbols)))
-        self.actions = np.zeros((1000,len(self.symbols)))
-        self.index = 5
+        yesterday = utils.get_previous_weekday(datetime.now()).strftime("%Y-%m-%d")
+        dir = 'G:\\My Drive\\PortfolioStats\\' + yesterday + '\\'
+        if load_from_yesterday:
+            self.port_values, self.port_diffs, self.actions, self.index = utils.load_env_values(dir)
+        else:
+            self.port_values = np.zeros((1000,1))
+            self.port_diffs = np.zeros((1000,len(self.symbols)))
+            self.actions = np.zeros((1000,len(self.symbols)))
+            self.index = 5
+        
         self.chart,self.og_chart = self.chart_obj.process()
         self.chart_len,self.cols = self.chart.shape
         state = self.get_recurrent_state(self.index)
@@ -34,7 +42,7 @@ class Env():
 
     def get_recurrent_state(self, index):
         
-        sequence = self.chart[index-self.timesteps:index]
+        sequence = self.chart[-1-self.timesteps:-1]
         sequence = (sequence - self.mean)/self.std
         sequence = np.reshape(sequence, (1,self.timesteps,self.cols))
 
@@ -56,7 +64,7 @@ class Env():
         
         port_diffs, current_value = self.portfolio.update_value(close_values = self.close_prices, actions = action_dict)
         self.current_value = current_value
-        self.port_values[self.index] = current_value * 0.1
+        self.port_values[self.index] = np.log(current_value) if current_value > 0 else np.log(1e-1)
         self.port_diffs[self.index] = np.array(list(port_diffs.values()))
     
     def step(self, action):
@@ -65,7 +73,7 @@ class Env():
         self.calculate_reward(action)
         done = False
 
-        if ((self.port_values[self.index] < self.threshold*0.1)):
+        if ((self.current_value < self.threshold)):
             done = True
             print('done')
 
@@ -73,5 +81,16 @@ class Env():
         self.index += 1
 
         return next_state, done
+    
+    def save_env(self):
+        today = datetime.now().strftime("%Y-%m-%d")
+        dir = 'G:\\My Drive\\PortfolioStats\\' + today + '\\'
+        #If directory does not exist create it
+        if not os.path.exists(dir):
+            os.makedirs(dir)
 
-
+        utils.save_actions(self.actions, dir)
+        utils.save_port_values(self.port_values, dir)
+        utils.save_portfolio_diffs(self.port_diffs, dir)
+        utils.save_index(self.index, dir)
+        return

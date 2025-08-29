@@ -71,7 +71,6 @@ class portolio():
                     port_change, percentage_diff = self.calculate_returns(close_value, 'B', bought_value, -1 )
                     self.port_changes[symbol] = 0
                     self.percentage_diff_dict[symbol] = percentage_diff
-
                     meta.BUY(self.meta_symbols[symbol],self.counter)       
 
             if (action < -1*self.threshold_value) and not self.selling[symbol] : # First Sell
