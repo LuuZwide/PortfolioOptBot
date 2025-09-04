@@ -1,5 +1,6 @@
 
 import meta
+import json
 
 class portolio():
 
@@ -117,19 +118,60 @@ class portolio():
 
         return self.percentage_diff_dict, current_value    
     
-    def reset(self):
-        self.value = 1
-        self.flying_value = 1
-        self.trade_counter = 0
-        self.bought_values = {}
-        self.selling_values = {}
-        self.updating = False
-        self.closed = False
-        self.updating = dict.fromkeys(self.symbols, False)
-        self.non_trades = 0
-        self.percentage_diff_dict = dict.fromkeys(self.symbols, 0)
-        self.bought = dict.fromkeys(self.symbols, False)
-        self.b_counter = 0
-        self.s_counter = 0
-        self.selling = dict.fromkeys(self.symbols, False)
+    def reset(self,directory, load_from_previous = False):
+        if load_from_previous:
+            self.load_values(directory)
+        else:
+            self.value = 1
+            self.flying_value = 1
+            self.trade_counter = 0
+            self.bought_values = {}
+            self.selling_values = {}
+            self.updating = False
+            self.closed = False
+            self.updating = dict.fromkeys(self.symbols, False)
+            self.non_trades = 0
+            self.percentage_diff_dict = dict.fromkeys(self.symbols, 0)
+            self.bought = dict.fromkeys(self.symbols, False)
+            self.b_counter = 0
+            self.s_counter = 0
+            self.selling = dict.fromkeys(self.symbols, False)
+
         return self.value
+    
+    def save_values(self, dir):
+        portfolio_dict = {
+            'value': self.value,
+            'bought': self.bought,
+            'bought_values': self.bought_values,
+            'selling': self.selling,
+            'selling_values': self.selling_values,
+            'percentage_diff_dict': self.percentage_diff_dict,
+            'port_changes': self.port_changes,
+            'trade_counter': self.trade_counter,
+            'counter': self.counter
+        }
+        try:
+            with open(dir + 'portfolio.json', 'w') as f:
+                json.dump(portfolio_dict, f)
+        except FileNotFoundError:
+            with open(dir + 'portfolio.json', 'w') as f:
+                json.dump(portfolio_dict, f)
+        return
+    
+    def load_values(self, dir):
+        try:
+            with open(dir + 'portfolio.json', 'r') as f:
+                portfolio_dict = json.load(f)
+                self.value = portfolio_dict['value']
+                self.bought = portfolio_dict['bought']
+                self.bought_values = portfolio_dict['bought_values']
+                self.selling = portfolio_dict['selling']
+                self.selling_values = portfolio_dict['selling_values']
+                self.percentage_diff_dict = portfolio_dict['percentage_diff_dict']
+                self.port_changes = portfolio_dict['port_changes']
+                self.trade_counter = portfolio_dict['trade_counter']
+                self.counter = portfolio_dict['counter']
+        except FileNotFoundError:
+            print("Portfolio file not found. Starting with default values.")
+        return

@@ -4,6 +4,7 @@ import chart
 import utils
 from datetime import datetime, timedelta
 import os
+import json
 
 class Env():
 
@@ -21,19 +22,32 @@ class Env():
         self.mean, self.std = utils.read_from_csv(dir = 'G:\\My Drive\\Models\\chartStats\\')
         self.threshold = 0
         self.current_value = 0
+
     
-    def reset(self, load_from_yesterday = False):
-        _ = self.portfolio.reset()
+    def reset(self, load_from = 'R'):
+        # R -> Reset
+        # T -> Today
+        # Y -> Yesterday
+
         self.action_dict = {}
         yesterday = utils.get_previous_weekday(datetime.now()).strftime("%Y-%m-%d")
-        dir = 'G:\\My Drive\\PortfolioStats\\' + yesterday + '\\'
-        if load_from_yesterday:
-            self.port_values, self.port_diffs, self.actions, self.index = utils.load_env_values(dir)
+        today = datetime.now().strftime("%Y-%m-%d")
+        dir = 'G:\\My Drive\\PortfolioStats\\' + today + '\\'
+
+        if load_from == 'T' : #today
+            dir = 'G:\\My Drive\\PortfolioStats\\' + today + '\\'
+            self.load_state(dir)
+            _ = self.portfolio.reset( dir, True)
+        elif load_from == 'Y' : #Yesterday 
+            dir = 'G:\\My Drive\\PortfolioStats\\' + yesterday + '\\'
+            self.load_state(dir)
+            _ = self.portfolio.reset( dir, True)
         else:
             self.port_values = np.zeros((1000,1))
             self.port_diffs = np.zeros((1000,len(self.symbols)))
             self.actions = np.zeros((1000,len(self.symbols)))
             self.index = 5
+            _ = self.portfolio.reset( dir, False)
         
         self.chart,self.og_chart = self.chart_obj.process()
         self.chart_len,self.cols = self.chart.shape
@@ -75,6 +89,9 @@ class Env():
 
         if ((self.current_value < self.threshold)):
             done = True
+            '''
+                TODO : CLOSE ALL TRADES
+            '''
             print('done')
 
         next_state = self.get_recurrent_state(self.index)
@@ -89,8 +106,41 @@ class Env():
         if not os.path.exists(dir):
             os.makedirs(dir)
 
-        utils.save_actions(self.actions, dir)
-        utils.save_port_values(self.port_values, dir)
-        utils.save_portfolio_diffs(self.port_diffs, dir)
-        utils.save_index(self.index, dir)
+        self.save_state(dir)
+        self.portfolio.save_values(dir)
+
         return
+    
+    def save_state(self, dir):
+        env_dic = {
+            'index': self.index,
+            'current' : self.current_value,
+            'port_values': self.port_values.tolist(),
+            'port_diffs': self.port_diffs.tolist(),
+            'actions': self.actions.tolist()
+        }
+        try:
+            with open(dir + 'env.json', 'w') as f:
+                json.dump(env_dic, f)
+            return
+        except FileNotFoundError:
+            with open(dir + 'env.json', 'w') as f:
+               json.dump(env_dic, f)
+        return  
+    
+    def load_state(self, dir):
+        try:
+            with open(dir + 'env.json', 'r') as f:
+                env_dic = json.load(f)
+                self.index = env_dic['index']
+                self.current_value = env_dic['current']
+                self.port_values = np.array(env_dic['port_values'])
+                self.port_diffs = np.array(env_dic['port_diffs'])
+                self.actions = np.array(env_dic['actions'])
+        except FileNotFoundError:
+            print("Env file not found. Starting with default values.")
+            self.reset()
+        return
+    
+
+ 

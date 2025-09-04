@@ -78,10 +78,10 @@ def closePositions(symbol):
                     
                     if pos_type == mt5.ORDER_TYPE_BUY:
                         order_type = mt5.ORDER_TYPE_SELL
-                        price = mt5.symbol_info_tick(symbol).bid
+                        price = mt5.symbol_info_tick(symbol).bid# type: ignore
                     else:
                         order_type = mt5.ORDER_TYPE_BUY
-                        price = mt5.symbol_info_tick(symbol).ask
+                        price = mt5.symbol_info_tick(symbol).ask# type: ignore
 
                     request = {
                                 "action": mt5.TRADE_ACTION_DEAL,
@@ -95,7 +95,7 @@ def closePositions(symbol):
                                 "comment": "Close position",
                                 "type_filling": mt5.ORDER_FILLING_IOC,
                                 } 
-                    result = mt5.order_send(request)
+                    result = mt5.order_send(request)# type: ignore
                     if result.retcode != mt5.TRADE_RETCODE_DONE:
                         print(f"Failed to close position #{position.ticket}, retcode={result.retcode}")
                     else:
@@ -121,7 +121,7 @@ def BUY(symbol, counter):
     type = mt5.ORDER_TYPE_BUY
     print('symbol : ', symbol)
     price = mt5.symbol_info_tick(symbol).ask # type: ignore
-    print('TICK INFO : ',  mt5.symbol_info_tick(symbol))
+    print('TICK INFO : ',  mt5.symbol_info_tick(symbol))# type: ignore
     request = getRequest(type,price, counter, symbol)
     print('REQUEST INFO : ', request)
     result = mt5.order_send(request) # type: ignore
@@ -136,7 +136,7 @@ def SELL(symbol, counter):
     type = mt5.ORDER_TYPE_SELL
     print('symbol : ', symbol)
     price = mt5.symbol_info_tick(symbol).ask  # type: ignore
-    print('TICK INFO : ',  mt5.symbol_info_tick(symbol))
+    print('TICK INFO : ',  mt5.symbol_info_tick(symbol)) # type: ignore
     request = getRequest(type,price, counter, symbol)
     print('REQUEST INFO : ', request)
     result = mt5.order_send(request) # type: ignore

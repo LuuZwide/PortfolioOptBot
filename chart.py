@@ -73,7 +73,6 @@ class Chart():
         chart_from_date = today - timedelta(days=(5)) #From Yesterday
         chart_from_date = chart_from_date.strftime('%Y-%m-%d')
         df = self.generateCandleSticks(client=FOREX_CLIENT, start_date = chart_from_date, end_date = chart_to_date, limit = 5000, symbol = symbol )
-        print(symbol ,' ', df.values[-1], ' - ', df.values[0], len(df.values))
         return df
 
     def generateCandleSticks(self,client, start_date  , end_date ,limit , symbol= None):
@@ -86,6 +85,7 @@ class Chart():
         #Only keep times between 07:00 and 19:45 UTC
         df = df[(df['date'].dt.time >= datetime.strptime("07:00", "%H:%M").time()) & (df['date'].dt.time <= datetime.strptime("19:45", "%H:%M").time())]
         final_df = df[[ 'open', 'high', 'low', 'close','date']]
+        print(symbol,final_df.values[-1] )
         return final_df
     
     def perform_wavelet_denoise(self, chart):

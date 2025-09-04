@@ -3,7 +3,7 @@ import pywt
 import pandas as pd
 from datetime import datetime, timedelta
 import time
-
+import json
 
 def wavelet_denoise(data, wavelet='db4'):
     coeffs = pywt.wavedec(data, wavelet)
@@ -118,9 +118,17 @@ def read_from_csv(dir):
 def wait_until_time(target_time):
     while True:
         now = datetime.now()
-        if now.strftime("%H:%M") == target_time:
+        if now.strftime("%H:%M") > target_time:
             break
         time.sleep(1)
+
+def stop_if_time(target_time):
+    now = datetime.now()
+    if now.strftime("%H:%M") > target_time:
+        print("Ending session : ", now)
+        return True
+    else:
+        return False
 
 def save_actions(actions, dir):
     #Create folder for today
@@ -148,6 +156,13 @@ def load_env_values(dir):
     port_values = pd.read_csv(dir + 'port_values.csv').values
     portfolio_diffs = pd.read_csv(dir + 'portfolio_diffs.csv').values
     index = pd.read_csv(dir + 'index.csv').values
+    index = np.squeeze(index)
+    print('loaded index ', index)
+    print('port values :', port_values.shape)
+    print('portfolio diffs :', portfolio_diffs.shape)
+    print('loaded actions :', actions.shape)
+    print('Current port value :', port_values[index -1])
+
     return actions, port_values, portfolio_diffs, index
 
 def get_previous_weekday(date):

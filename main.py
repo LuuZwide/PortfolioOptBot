@@ -25,7 +25,10 @@ if __name__ == "__main__":
     env_type = 'QA'
     env = env.Env(symbols,env_type)
     model = PPO.load(r'G:\My Drive\Models\SB3\rec_best_model\best_model.zip')
-    state = env.reset()
+    state = env.reset(load_from = 'R') 
+        # R -> Reset
+        # T -> Today
+        # Y -> Yesterday
     done = False
     '''
         working hours 07:00 to 19:45 UTC
@@ -33,21 +36,25 @@ if __name__ == "__main__":
     '''
 
     #wait till 09:00 then start
-    #utils.wait_until_time("09:00")
+    utils.wait_until_time("09:00")
 
     while not (done):
         action, _ = model.predict(state, deterministic=True)
         action_dict = dict(zip(symbols, np.squeeze(action)))
         state, done= env.step(action)
         # Debug msg
-        print('closing ', env.close_prices)
-        print('actions :',action_dict )
+        print('closing prices', env.close_prices)
         print('%',env.portfolio.percentage_diff_dict.values())
         print('env current_value: ', env.current_value)
         print('Equity :', mt5.account_info().equity) # type: ignore
         print('\n')
         env.save_env()
-        utils.wait_minute(15,10) #15 minutes 10 seconds
+        
+        if utils.stop_if_time("21:45"):
+            break
+        else:
+            utils.wait_minute(15,10) #15 minutes 10 seconds
+
 
 
 
