@@ -78,9 +78,9 @@ def wait_minute(minutes,seconds ):
 def get_logins(dir,user):
     dir = dir
     if user == 'demo':
-        main_dir = dir + '\demo_logins.csv'
+        main_dir = dir + '\demo_logins.csv' # type: ignore
     elif user == 'live':
-        main_dir = dir + '\live_logins.csv'
+        main_dir = dir + '\live_logins.csv' # type: ignore
     else:
         print('invalid : enter demo or live')
         return None,None,None

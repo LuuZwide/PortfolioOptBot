@@ -49,6 +49,7 @@ class Env():
             self.actions = np.zeros((1000,len(self.symbols)))
             self.index = 5
             _ = self.portfolio.reset( dir, False)
+            meta.close_all(self.symbols)
         
         self.chart,self.og_chart = self.chart_obj.process()
         self.chart_len,self.cols = self.chart.shape
