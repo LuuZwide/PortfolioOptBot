@@ -67,7 +67,7 @@ def retry(env_type,symbols,username, password,server,fail_count):
         login(username, password,server,fail_count)
         result = do_test(symbols,env_type)
         return result
-
+    
 def closePositions(symbol):
         positions = mt5.positions_get(symbol=symbol) # type: ignore
         if positions != None:  
@@ -101,6 +101,12 @@ def closePositions(symbol):
                     else:
                         print(f"Position #{position.ticket} closed successfully") 
         return
+
+def close_all(symbols):
+    for symbol in symbols:
+          closePositions(symbol)
+     
+    return 
 
 def getRequest(type, price,magic,symbol, volume = 0.01,deviation = 20): 
     request = {

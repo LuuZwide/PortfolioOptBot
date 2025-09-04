@@ -4,6 +4,7 @@ import chart
 import utils
 from datetime import datetime, timedelta
 import os
+import meta
 import json
 
 class Env():
@@ -89,10 +90,8 @@ class Env():
 
         if ((self.current_value < self.threshold)):
             done = True
-            '''
-                TODO : CLOSE ALL TRADES
-            '''
-            print('done')
+            print('__________done_______________')
+            meta.close_all(self.symbols)
 
         next_state = self.get_recurrent_state(self.index)
         self.index += 1
