@@ -15,9 +15,9 @@ print(stable_baselines3.__version__)
 # U = 95713077 
 
 if __name__ == "__main__":
-    symbols = ['EURUSD', 'USDCHF', 'EURJPY', 'USDJPY']
+    symbols = [ 'EURCHF', 'EURJPY','EURUSD','USDCHF', 'USDJPY' ]
     
-    user = 'demo' # demo or LIVE
+    user = 'live' # demo or LIVE
     logins_dir = r"C:\Users\LNxumalo\Desktop\other\Docs"
     username, password, server = utils.get_logins(dir = logins_dir, user = user)
     meta.login(username, password, server)
@@ -44,13 +44,16 @@ if __name__ == "__main__":
         state, done= env.step(action)
         # Debug msg
         print('closing prices', env.close_prices)
-        print('%',env.portfolio.percentage_diff_dict.values())
+        print('actions : ', env.action_dict)
+        print('%',env.portfolio.percentage_diff_dict)
         print('env current_value: ', env.current_value)
         print('Equity :', mt5.account_info().equity) # type: ignore
+        
         print('\n')
         env.save_env()
         
         if utils.stop_if_time("21:45"):
+            meta.close_all(symbols)
             break
         else:
             utils.wait_minute(15,10) #15 minutes 10 seconds

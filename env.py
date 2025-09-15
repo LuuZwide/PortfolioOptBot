@@ -2,7 +2,7 @@ import portfolio
 import numpy as np
 import chart
 import utils
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 import meta
 import json
@@ -21,8 +21,9 @@ class Env():
         self.chart_obj = chart.Chart(self.symbols)
 
         self.mean, self.std = utils.read_from_csv(dir = 'G:\\My Drive\\Models\\chartStats\\')
-        self.threshold = 0
+        self.threshold = 0.5 #Live threshold - take the L start tomorrow 
         self.current_value = 0
+        self.action_dict = {}
 
     
     def reset(self, load_from = 'R'):
@@ -73,12 +74,12 @@ class Env():
         return state  
 
     def calculate_reward(self,action):
-        action_dict = dict(zip(self.symbols, np.squeeze(action)))
+        self.action_dict = dict(zip(self.symbols, np.squeeze(action)))
         self.close_prices = {}
         for symbol in self.symbols:
             self.close_prices[symbol] = self.og_chart[symbol]['close'].iloc[-1] # Last close value from original chart
         
-        port_diffs, current_value = self.portfolio.update_value(close_values = self.close_prices, actions = action_dict)
+        port_diffs, current_value = self.portfolio.update_value(close_values = self.close_prices, actions = self.action_dict )
         self.current_value = current_value
         self.port_values[self.index] = np.log(current_value) if current_value > 0 else np.log(1e-1)
         self.port_diffs[self.index] = np.array(list(port_diffs.values()))
