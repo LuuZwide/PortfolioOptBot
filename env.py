@@ -13,15 +13,16 @@ class Env():
         self.index = 0 # basically counts as counter 
         self.symbols = symbols
         self.portfolio = portfolio.portolio(self.symbols,env_type)
-        self.timesteps = 5
+        self.timesteps = 8
 
         self.port_values = np.zeros((1000,1)) 
         self.port_diffs = np.zeros((1000,len(self.symbols)))
         self.actions = np.zeros((1000,len(self.symbols)))
         self.chart_obj = chart.Chart(self.symbols)
+        self.value = 1
 
-        self.mean, self.std = utils.read_from_csv(dir = 'G:\\My Drive\\Models\\chartStats\\')
-        self.threshold = 0.5 #Live threshold - take the L start tomorrow 
+        self.mean, self.std = utils.read_from_csv(dir = './info/ChartStats/')
+        self.threshold = 0.4#Live threshold - take the L start tomorrow 
         self.current_value = 0
         self.action_dict = {}
 
@@ -34,21 +35,23 @@ class Env():
         self.action_dict = {}
         yesterday = utils.get_previous_weekday(datetime.now()).strftime("%Y-%m-%d")
         today = datetime.now().strftime("%Y-%m-%d")
-        dir = 'G:\\My Drive\\PortfolioStats\\' + today + '\\'
+        dir = './info/PortfolioStats/' + today + '/'
 
         if load_from == 'T' : #today
-            dir = 'G:\\My Drive\\PortfolioStats\\' + today + '\\'
+            dir = './info/PortfolioStats/' + today + '/'
+            print('Loading from today dir : ', dir)
             self.load_state(dir)
-            _ = self.portfolio.reset( dir, True)
-        elif load_from == 'Y' : #Yesterday 
-            dir = 'G:\\My Drive\\PortfolioStats\\' + yesterday + '\\'
+            _ = self.portfolio.reset( dir, True, 'T')
+        elif load_from == 'Y' : #Yesterday
+            dir = './info/PortfolioStats/' + yesterday + '/'
+            print('Loading from yesterday dir : ', dir)
             self.load_state(dir)
-            _ = self.portfolio.reset( dir, True)
+            _ = self.portfolio.reset( dir, True, 'Y')
         else:
             self.port_values = np.zeros((1000,1))
             self.port_diffs = np.zeros((1000,len(self.symbols)))
             self.actions = np.zeros((1000,len(self.symbols)))
-            self.index = 5
+            self.index = self.timesteps # Start at the timestep index
             _ = self.portfolio.reset( dir, False)
             meta.close_all(self.symbols)
         
@@ -81,6 +84,7 @@ class Env():
         
         port_diffs, current_value = self.portfolio.update_value(close_values = self.close_prices, actions = self.action_dict )
         self.current_value = current_value
+        self.value = self.portfolio.value
         self.port_values[self.index] = np.log(current_value) if current_value > 0 else np.log(1e-1)
         self.port_diffs[self.index] = np.array(list(port_diffs.values()))
     
@@ -102,7 +106,7 @@ class Env():
     
     def save_env(self):
         today = datetime.now().strftime("%Y-%m-%d")
-        dir = 'G:\\My Drive\\PortfolioStats\\' + today + '\\'
+        dir = './info/PortfolioStats/' + today + '/'
         #If directory does not exist create it
         if not os.path.exists(dir):
             os.makedirs(dir)

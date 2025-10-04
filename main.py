@@ -7,28 +7,27 @@ import meta
 import MetaTrader5 as mt5
 import stable_baselines3
 
-print(np.__version__)
-print(pd.__version__)
-print(stable_baselines3.__version__)
+p_user = 'demo' # demo or live
+p_start_from = 'R'
 
-# P = _n7wRxUo
-# U = 95713077 
+# R -> Reset - starts new run 
+# T -> Today - loads todays data incase of crash
+# Y -> Yesterday - loads from yesterday
 
 if __name__ == "__main__":
-    symbols = [ 'EURCHF', 'EURJPY','EURUSD','USDCHF', 'USDJPY' ]
-    
-    user = 'live' # demo or LIVE
-    logins_dir = r"C:\Users\LNxumalo\Desktop\other\Docs"
-    username, password, server = utils.get_logins(dir = logins_dir, user = user)
+    symbols = ['EURUSD', 'USDJPY', 'EURJPY']
+
+    logins_dir = "./info/Credentials"
+    username, password, server = utils.get_logins(dir = logins_dir, user = p_user)
     meta.login(username, password, server)
     
     env_type = 'QA'
     env = env.Env(symbols,env_type)
-    model = PPO.load(r'G:\My Drive\Models\SB3\rec_best_model\best_model.zip')
-    state = env.reset(load_from = 'R') 
-        # R -> Reset
-        # T -> Today
-        # Y -> Yesterday
+
+    print('mean', env.mean)
+    print('std', env.std)
+    model = PPO.load("./info/Models/best_model.zip")
+    state = env.reset(load_from = p_start_from) 
     done = False
     '''
         working hours 07:00 to 19:45 UTC
@@ -36,7 +35,7 @@ if __name__ == "__main__":
     '''
 
     #wait till 09:00 then start
-    utils.wait_until_time("09:00")
+    utils.wait_until_time("09:02")
 
     while not (done):
         action, _ = model.predict(state, deterministic=True)
@@ -47,18 +46,18 @@ if __name__ == "__main__":
         print('actions : ', env.action_dict)
         print('%',env.portfolio.percentage_diff_dict)
         print('env current_value: ', env.current_value)
+        print('env port value : ', env.value)
         print('Equity :', mt5.account_info().equity) # type: ignore
         
         print('\n')
         env.save_env()
+
+        if done:
+            break
         
-        if utils.stop_if_time("21:45"):
+        if utils.stop_if_time("22:45"):
             meta.close_all(symbols)
             break
         else:
-            utils.wait_minute(15,10) #15 minutes 10 seconds
-
-
-
-
-    
+            #wait for next 15min candle
+            utils.wait_until_next_interval(15)
