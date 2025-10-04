@@ -5,10 +5,15 @@ import utils
 import pandas as pd
 import meta
 import MetaTrader5 as mt5
-import stable_baselines3
+import argparse
 
-p_user = 'demo' # demo or live
-p_start_from = 'R'
+parser = argparse.ArgumentParser()
+parser.add_argument('--user', type=str, default='demo', help='User type: demo or live')
+parser.add_argument('--start_from', type=str, default='R', help='R: Reset, T: Today, Y: Yesterday')
+args = parser.parse_args()
+
+p_user = args.user
+p_start_from = args.start_from
 
 # R -> Reset - starts new run 
 # T -> Today - loads todays data incase of crash

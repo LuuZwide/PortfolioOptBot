@@ -118,7 +118,7 @@ class portolio():
 
         return self.percentage_diff_dict, current_value    
     
-    def reset(self,directory, load_from_previous = False):
+    def reset(self,directory, load_from_previous = False, type = 'R'):
         if load_from_previous:
             self.load_values(directory)
         else:
@@ -134,18 +134,19 @@ class portolio():
             self.percentage_diff_dict = dict.fromkeys(self.symbols, 0)
             self.b_counter = 0
             self.s_counter = 0         
-
-        self.bought = dict.fromkeys(self.symbols, False)
-        self.selling = dict.fromkeys(self.symbols, False)
+        
+        if type == 'R': #If we are resetting then reset bought and selling values else just load them
+            self.bought = dict.fromkeys(self.symbols, False)
+            self.selling = dict.fromkeys(self.symbols, False)
 
         return self.value
     
     def save_values(self, dir):
         portfolio_dict = {
             'value': self.value,
-            #'bought': self.bought,
+            'bought': self.bought,
             'bought_values': self.bought_values,
-            #'selling': self.selling,
+            'selling': self.selling,
             'selling_values': self.selling_values,
             'percentage_diff_dict': self.percentage_diff_dict,
             'port_changes': self.port_changes,
@@ -165,9 +166,9 @@ class portolio():
             with open(dir + 'portfolio.json', 'r') as f:
                 portfolio_dict = json.load(f)
                 self.value = portfolio_dict['value']
-                #self.bought = portfolio_dict['bought']
+                self.bought = portfolio_dict['bought']
                 self.bought_values = portfolio_dict['bought_values']
-                #self.selling = portfolio_dict['selling']
+                self.selling = portfolio_dict['selling']
                 self.selling_values = portfolio_dict['selling_values']
                 self.percentage_diff_dict = portfolio_dict['percentage_diff_dict']
                 self.port_changes = portfolio_dict['port_changes']
