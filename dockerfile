@@ -1,7 +1,9 @@
-FROM python:3.9
+FROM python:3.10
 
 COPY . /app
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
+
+CMD ["python", "main.py", "--user", "demo", "--start_from", "R"]

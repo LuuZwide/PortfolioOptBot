@@ -172,3 +172,15 @@ def get_previous_weekday(date):
     else:
         previous_weekday = date - timedelta(days=1)
     return previous_weekday
+
+def wait_until_next_interval(interval_minutes):
+    #round down the current time to the nearest interval
+    now = datetime.now()
+    now = now - timedelta(minutes=now.minute % interval_minutes,
+                          seconds=now.second,
+                          microseconds=now.microsecond)
+
+    next_minute = (now + timedelta(minutes=interval_minutes)).replace(second=0, microsecond=0)
+    sleep_time = (next_minute - now).total_seconds()
+    time.sleep(sleep_time)
+    return

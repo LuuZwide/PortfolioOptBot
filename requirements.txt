@@ -1,0 +1,6 @@
+MetaTrader5
+pandas
+numpy
+stable-baselines3
+pywavelets
+polygon
