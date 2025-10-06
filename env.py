@@ -94,7 +94,7 @@ class Env():
         self.calculate_reward(action)
         done = False
 
-        if ((self.current_value < self.threshold)):
+        if ((self.value < self.threshold)):
             done = True
             print('__________done_______________')
             meta.close_all(self.symbols)
