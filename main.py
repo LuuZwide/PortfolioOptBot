@@ -35,12 +35,11 @@ if __name__ == "__main__":
     state = env.reset(load_from = p_start_from) 
     done = False
     '''
-        working hours 07:00 to 19:45 UTC
-        Pretoria times 09:00 to 21:45 (UTC + 2)
+        working hours 00:02 from Monday to Friday
     '''
 
-    #wait till 09:00 then start
-    utils.wait_until_time("09:02")
+    #wait till 00:02 then start
+    utils.wait_until_time("00:02")
 
     while not (done):
         action, _ = model.predict(state, deterministic=True)
@@ -58,10 +57,6 @@ if __name__ == "__main__":
         env.save_env()
 
         if done:
-            break
-        
-        if utils.stop_if_time("22:45"):
-            meta.close_all(symbols)
             break
         else:
             #wait for next 15min candle

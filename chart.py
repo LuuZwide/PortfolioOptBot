@@ -82,8 +82,6 @@ class Chart():
         
         df = pd.DataFrame(response)
         df['date'] = pd.to_datetime(df['timestamp'], unit='ms')
-        #Only keep times between 07:00 and 21:45 UTC
-        df = df[(df['date'].dt.time >= datetime.strptime("07:00", "%H:%M").time()) & (df['date'].dt.time <= datetime.strptime("23:45", "%H:%M").time())]
         final_df = df[[ 'open', 'high', 'low', 'close','date']]
         print(symbol,final_df.values[-1] )
         return final_df
