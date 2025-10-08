@@ -38,8 +38,8 @@ if __name__ == "__main__":
         working hours 00:02 from Monday to Friday
     '''
 
-    #wait till 00:02 then start
-    utils.wait_until_time("00:02")
+    #wait till 02:02 then start
+    utils.wait_until_time("02:02")
 
     while not (done):
         action, _ = model.predict(state, deterministic=True)
