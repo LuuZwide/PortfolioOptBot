@@ -26,7 +26,7 @@ from polygon import RESTClient
 import utils
 import numpy as np
 
-FOREX_CLIENT = RESTClient("Y_MQfuWV7a5mqIVZeIiB4Y7P4Z9FrpRq")
+FOREX_CLIENT = RESTClient("v40nosrbRie8q4wWrvpMu0f2pUB16Edr")
 
 class Chart():
     def __init__(self, symbols):
