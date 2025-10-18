@@ -2,7 +2,7 @@
 import meta
 import json
 
-class portolio():
+class portfolio():
 
     def __init__(self,symbols, env_type):
         self.symbols = symbols

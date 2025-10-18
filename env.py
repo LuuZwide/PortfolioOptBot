@@ -12,8 +12,8 @@ class Env():
     def __init__(self, symbols,env_type):
         self.index = 0 # basically counts as counter 
         self.symbols = symbols
-        self.portfolio = portfolio.portolio(self.symbols,env_type)
-        self.timesteps = 8
+        self.portfolio = portfolio.portfolio(self.symbols,env_type)
+        self.timesteps = 4
 
         self.port_values = np.zeros((1000,1)) 
         self.port_diffs = np.zeros((1000,len(self.symbols)))
