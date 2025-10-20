@@ -42,9 +42,9 @@ if __name__ == "__main__":
     utils.wait_until_time("02:02")
 
     while not (done):
+        state = env.return_current_state()
         action, _ = model.predict(state, deterministic=True)
-        action_dict = dict(zip(symbols, np.squeeze(action)))
-        state, done= env.step(action)
+        done = env.step(action)
         # Debug msg
         print('closing prices', env.close_prices)
         print('actions : ', env.action_dict)

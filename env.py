@@ -88,9 +88,13 @@ class Env():
         self.port_values[self.index] = np.log(current_value) if current_value > 0 else np.log(1e-1)
         self.port_diffs[self.index] = np.array(list(port_diffs.values()))
     
+    def return_current_state(self):
+        self.chart,self.og_chart = self.chart_obj.process() #Get the latest chart data
+        state = self.get_recurrent_state(self.index)
+        return state
+    
     def step(self, action):
         
-        self.chart,self.og_chart = self.chart_obj.process()
         self.calculate_reward(action)
         done = False
 
@@ -102,7 +106,7 @@ class Env():
         next_state = self.get_recurrent_state(self.index)
         self.index += 1
 
-        return next_state, done
+        return done
     
     def save_env(self):
         today = datetime.now().strftime("%Y-%m-%d")
