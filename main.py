@@ -32,7 +32,7 @@ if __name__ == "__main__":
     print('mean', env.mean)
     print('std', env.std)
     model = PPO.load("./info/Models/best_model.zip")
-    state = env.reset(load_from = p_start_from) 
+    env.reset(load_from = p_start_from) 
     done = False
     '''
         working hours 00:02 from Monday to Friday

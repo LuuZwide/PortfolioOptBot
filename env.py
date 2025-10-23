@@ -57,8 +57,10 @@ class Env():
         
         self.chart,self.og_chart = self.chart_obj.process()
         self.chart_len,self.cols = self.chart.shape
-        state = self.get_recurrent_state(self.index)
-        return state
+
+        # Don't need to return state for reset function
+        # This is done in the get_current_state function
+        return 
 
     def get_recurrent_state(self, index):
         
@@ -73,6 +75,7 @@ class Env():
         port_diff_sequence = np.reshape(port_diffs_values, (1,self.timesteps,len(self.symbols)))
 
         state = np.concatenate((port_sequence,sequence,port_diff_sequence), axis=2).astype(np.float64)
+        print(index, ': ', 'v - ',self.port_values[index], ' diffs - ', self.port_diffs[index])
 
         return state  
 
@@ -91,6 +94,7 @@ class Env():
     def return_current_state(self):
         self.chart,self.og_chart = self.chart_obj.process() #Get the latest chart data
         state = self.get_recurrent_state(self.index)
+        self.index += 1
         return state
     
     def step(self, action):
@@ -102,9 +106,6 @@ class Env():
             done = True
             print('__________done_______________')
             meta.close_all(self.symbols)
-
-        next_state = self.get_recurrent_state(self.index)
-        self.index += 1
 
         return done
     
