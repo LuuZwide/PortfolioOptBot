@@ -64,7 +64,7 @@ class Chart():
         state_chart = state_chart.dropna().values
         state_chart = state_chart.astype(np.float64)
 
-        return state_chart , original_chart_dict
+        return state_chart , chart_dict
             
     
     def get_polygon_chart(self, symbol = None):

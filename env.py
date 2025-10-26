@@ -22,7 +22,7 @@ class Env():
         self.value = 1
 
         self.mean, self.std = utils.read_from_csv(dir = './info/ChartStats/')
-        self.threshold = 0.4#Live threshold - take the L start tomorrow 
+        self.threshold = 0.1#Live threshold - take the L start tomorrow 
         self.current_value = 0
         self.action_dict = {}
 
@@ -75,7 +75,7 @@ class Env():
         port_diff_sequence = np.reshape(port_diffs_values, (1,self.timesteps,len(self.symbols)))
 
         state = np.concatenate((port_sequence,sequence,port_diff_sequence), axis=2).astype(np.float64)
-        print(index, ': ', 'v - ',self.port_values[index], ' diffs - ', self.port_diffs[index])
+        print(index, self.chart[-1], ': ', 'v - ',self.port_values[index], ' diffs - ', self.port_diffs[index])
 
         return state  
 
