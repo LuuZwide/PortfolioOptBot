@@ -1,3 +1,4 @@
+from sb3_contrib import RecurrentPPO
 import env
 from stable_baselines3 import PPO
 import numpy as np
@@ -31,7 +32,7 @@ if __name__ == "__main__":
 
     print('mean', env.mean)
     print('std', env.std)
-    model = PPO.load("./info/Models/best_model.zip")
+    model = RecurrentPPO.load("./info/Models/best_model.zip")
     env.reset(load_from = p_start_from) 
     done = False
     '''
@@ -39,7 +40,7 @@ if __name__ == "__main__":
     '''
 
     #wait till 02:02 then start
-    utils.wait_until_time("02:02")
+    #utils.wait_until_time("02:02")
 
     while not (done):
         state = env.return_current_state()

@@ -18,6 +18,7 @@ class Env():
         self.port_values = np.zeros((1000,1)) 
         self.port_diffs = np.zeros((1000,len(self.symbols)))
         self.actions = np.zeros((1000,len(self.symbols)))
+        self.state_chart = np.zeros((1000,25))
         self.chart_obj = chart.Chart(self.symbols)
         self.value = 1
 
@@ -58,13 +59,16 @@ class Env():
         self.chart,self.og_chart = self.chart_obj.process()
         self.chart_len,self.cols = self.chart.shape
 
+        for i in range(self.timesteps):
+            self.state_chart[i] = self.chart[-(self.timesteps - i)]
+
         # Don't need to return state for reset function
         # This is done in the get_current_state function
         return 
 
     def get_recurrent_state(self, index):
         
-        sequence = self.chart[-1-self.timesteps:-1]
+        sequence = self.state_chart[index-self.timesteps:index]
         sequence = (sequence - self.mean)/self.std
         sequence = np.reshape(sequence, (1,self.timesteps,self.cols))
 
@@ -93,6 +97,7 @@ class Env():
     
     def return_current_state(self):
         self.chart,self.og_chart = self.chart_obj.process() #Get the latest chart data
+        self.state_chart[self.index] = self.chart[-1]
         state = self.get_recurrent_state(self.index)
         self.index += 1
         return state
