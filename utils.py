@@ -23,7 +23,7 @@ def wavelet_denoise(data, wavelet='db4'):
     coeffs_thresh = [cA] + details_thresh
 
     # Reconstruct signal
-    return pywt.waverec(coeffs_thresh, wavelet)
+    return pywt.waverec(coeffs_thresh, wavelet)[:len(data)]
 
 def normlise_time(df):
   return df.hour / 24 + df.minute / 1440 + df.second / 86400
