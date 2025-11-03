@@ -40,7 +40,7 @@ if __name__ == "__main__":
     '''
 
     #wait till 02:02 then start
-    #utils.wait_until_time("02:02")
+    utils.wait_until_time("02:02")
 
     while not (done):
         state = env.return_current_state()

@@ -58,9 +58,8 @@ class Env():
         
         self.chart,self.og_chart = self.chart_obj.process()
         self.chart_len,self.cols = self.chart.shape
-
-        for i in range(self.timesteps):
-            self.state_chart[i] = self.chart[-(self.timesteps - i)]
+          
+        self.state_chart[:self.timesteps] = self.chart[len(self.chart)-self.timesteps:len(self.chart)]
 
         # Don't need to return state for reset function
         # This is done in the get_current_state function

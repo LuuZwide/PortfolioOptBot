@@ -173,14 +173,21 @@ def get_previous_weekday(date):
         previous_weekday = date - timedelta(days=1)
     return previous_weekday
 
-def wait_until_next_interval(interval_minutes):
-    #round down the current time to the nearest interval
+def wait_until_next_interval(interval_minutes: int):
+    """
+    Wait until the next interval mark (e.g., next 00, 15, 30, 45 minute mark).
+    """
     now = datetime.now()
-    now = now - timedelta(minutes=now.minute % interval_minutes,
-                          seconds=now.second,
-                          microseconds=now.microsecond)
+    minute = (now.minute // interval_minutes + 1) * interval_minutes
 
-    next_minute = (now + timedelta(minutes=interval_minutes)).replace(second=0, microsecond=0)
-    sleep_time = (next_minute - now).total_seconds()
+    # handle rollover to next hour/day
+    if minute == 60:
+        next_interval = (now.replace(minute=0, second=0, microsecond=0) 
+                         + timedelta(hours=1))
+    else:
+        next_interval = now.replace(minute=minute, second=0, microsecond=0)
+
+    sleep_time = (next_interval - now).total_seconds() + 100 # add 100 seconds buffer
+    print(f"Sleeping for {sleep_time:.2f} seconds until {next_interval.strftime('%H:%M:%S')}")
     time.sleep(sleep_time)
     return
