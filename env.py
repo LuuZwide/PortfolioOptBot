@@ -96,7 +96,7 @@ class Env():
     
     def return_current_state(self):
         self.chart,self.og_chart = self.chart_obj.process() #Get the latest chart data
-        self.state_chart[self.index] = self.chart[-1]
+        self.state_chart[self.index-self.timesteps:self.index] = self.chart[-1-self.timesteps:-1]
         state = self.get_recurrent_state(self.index)
         self.index += 1
         return state
