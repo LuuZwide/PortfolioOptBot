@@ -44,7 +44,6 @@ class Chart():
             denoised_chart = self.perform_wavelet_denoise(symbol_chart)
 
             processed_chart = utils.calculate_macd_sma_ema(denoised_chart,sma_window=20, ema_window=9, sc_window=14)
-            processed_chart.dropna(inplace=True)
 
             #if last symbol add time
             if (symbol == self.symbols[-1]):
